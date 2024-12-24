@@ -27,18 +27,33 @@
 
 ## インストール方法
 
-[lazy.nvim](https://lazy.folke.io/) を使う場合、`~/.config/nvim/lua/plugins/extend_word_motion.lua` を作成して以下の設定を追加してください。その他のプラグインマネージャーを使っている方は、それぞれのマネージャーの手順に沿ってインストールしてください。
+[lazy.nvim](https://lazy.folke.io/) を使う場合、`~/.config/nvim/lua/plugins/extend_word_motion.lua` を作成して以下のとおり設定します。その他のプラグインマネージャーを使っている場合、それぞれのマネージャーの手順に沿ってインストールしてください。
 
 ```lua
 return {
-  's-show/extend_word_motion',
-  opts = {
-    extend_word_motions = { 'w', 'b', 'e', 'ge' }
-  },
+  's-show/extend_word_motion.nvim',
+  opts = {},
   dependencies = {
     'sirasagi62/tinysegmenter.nvim'
   },
 }
 ```
 
-上記の `opts.extend_word_motions` には、拡張したい Word Motion を指定します。何も設定しない場合、デフォルトで `w`, `b`, `e`, `ge` が指定されます。
+上記の `opts.extend_word_motions` には、拡張したい Motion を指定します。何も設定しない場合、デフォルトで `w`, `b`, `e`, `ge` が指定されます。
+
+## option
+
+拡張する Word motion を一部の Motion に限定できます。その場合 `~/.config/nvim/lua/plugins/extend_word_motion.lua` の `opts` に拡張したい Motion を指定します。
+
+```lua
+return {
+  's-show/extend_word_motion.nvim',
+  opts = {
+    -- 拡張する Motion を `w`, `b`, `e` に限定
+    extend_word_motions = { 'w', 'b', 'e' }
+  },
+  dependencies = {
+    'sirasagi62/tinysegmenter.nvim'
+  },
+}
+```
