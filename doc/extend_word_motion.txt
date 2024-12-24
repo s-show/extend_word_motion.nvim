@@ -1,0 +1,48 @@
+*extend_word_motion.txt*	Word Motion の日本語向け拡張プラグイン
+
+Author: s-show <https://github.com/s-show>
+license: BSD-3-Clause license
+Repository: https://github.com/s-show/extend_word_motion.nvim
+
+==============================================================================
+INTRODUCTION                                 *extend_word_motion-introduction*
+
+日本語の分かち書きを実現する Neovim のプラグインである
+TinySegmenter.nvim <https://github.com/sirasagi62/tinysegmenter.nvim> を
+使って Word Motion を拡張し、日本語の文章で単語単位の移動を実現する Neovim の
+プラグインです。
+
+==============================================================================
+INSTALL                                           *extend_word_motion-install*
+
+lazy.nvim <https://github.com/folke/lazy.nvim>
+
+>lua
+  return {
+    's-show/extend_word_motion.nvim',
+    opts = {},
+    dependencies = {
+      'sirasagi62/tinysegmenter.nvim'
+    },
+  }
+>
+
+==============================================================================
+options                                           *extend_word_motion-options*
+
+                                           *extend_word_motion.extend_motions*
+extend_motions	{ table }
+
+拡張する Word motion を一部の Motion に限定する場合に、拡張したい Motion を
+指定します。
+
+>lua
+opts = {
+  -- 拡張する Motion を `w`, `b`, `e` に限定
+  extend_word_motions = { 'w', 'b', 'e' }
+},
+>
+
+default: { `w`, `b`, `e`, `ge` }
+
+vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:

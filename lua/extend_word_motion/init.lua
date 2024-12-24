@@ -4,7 +4,7 @@ local util = require('extend_word_motion.util')
 local pcall_result, tinysegmenter = pcall(require, "tinysegmenter")
 
 M.options = {
-  extend_word_motions = { 'w', 'b', 'e', 'ge' }
+  extend_motions = { 'w', 'b', 'e', 'ge' }
 }
 
 function M.setup(opts)
@@ -13,7 +13,9 @@ function M.setup(opts)
     -- Lua で早期リターンするためのコード
     do return end
   else
-    opts.extend_word_motions = util.MotionValidation(opts.extend_word_motions)
+    if opts.extend_motions ~= nil then
+      opts.extend_motions = util.MotionValidation(opts.extend_motions)
+    end
     M.options = vim.tbl_deep_extend("force", M.options, opts or {})
     local cursor_position = {}
     local cursor_line_number = 0
@@ -24,7 +26,7 @@ function M.setup(opts)
     local last_char_position = 0
     local parsed_text = {}
     local under_cursor_char = ''
-    for _, motion in ipairs(M.options.extend_word_motions) do
+    for _, motion in ipairs(M.options.extend_motions) do
       vim.api.nvim_set_keymap('n', motion, '', {
         noremap = true,
         callback = function()
