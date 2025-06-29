@@ -1,7 +1,6 @@
 --- 付随的な処理や繰り返し実行する処理を関数にして集めたモジュール
 -- @module M
 local M = {}
-local tinysegmenter = require("tinysegmenter")
 
 --- 引数で渡された文字が ASCII 文字かそうでないか判断する関数
 -- @param - char is string
@@ -34,6 +33,7 @@ end
 -- @return first: number
 -- @return second: table of string
 function M.GetNextLine(next_line_number)
+  local tinysegmenter = require("tinysegmenter")
   local text = vim.fn.getline(next_line_number)
   local text_without_space = vim.fn.substitute(text, '^[[:space:]　]\\+', '', 'g')
   -- 行頭に空白が無い場合、`vim.fn.strcharlen(...)` の返り値が `0` になるので、
@@ -48,11 +48,40 @@ end
 -- @return first: number
 -- @return second: table of string
 function M.PreviousNextLine(previous_line_number)
+  local tinysegmenter = require("tinysegmenter")
   local text = vim.fn.getline(previous_line_number)
   local text_without_space = vim.fn.substitute(text, '[[:space:]　]\\+\\_$', '', 'g')
   local last_char_position = vim.fn.strcharlen(text_without_space)
   local parsed_text = tinysegmenter.segment(text_without_space)
   return { last_char_position = last_char_position, parsed_text = parsed_text, }
+end
+
+--- 現在の行を解析して必要な情報を返す関数
+-- @param line_number 行番号
+-- @return テーブル: cursor_line_text, cursor_line_text_without_eol_space, cursor_line_text_without_space, first_char_position, last_char_position, parsed_text
+function M.AnalyzeLine(line_number, tinysegmenter)
+  local cursor_line_text = vim.fn.getline(line_number or '.')
+  local first_char_position = vim.fn.strcharlen(vim.fn.matchstr(cursor_line_text, '^[[:space:]　]\\+')) + 1
+  if first_char_position == 0 then
+    first_char_position = first_char_position + 1
+  end
+
+  -- 行末の空白文字を残して分かち書きすると後処理が面倒なので削除する
+  local cursor_line_text_without_eol_space = vim.fn.substitute(cursor_line_text, '[[:space:]　]\\+\\_$', '', 'g')
+  -- 行頭の空白文字も残すと後処理が面倒なので削除する
+  local cursor_line_text_without_space = vim.fn.substitute(cursor_line_text_without_eol_space, '^[[:space:]　]\\+', '', 'g')
+
+  local last_char_position = vim.fn.strcharlen(cursor_line_text_without_eol_space)
+  local parsed_text = tinysegmenter.segment(cursor_line_text_without_space)
+
+  return {
+    cursor_line_text = cursor_line_text,
+    cursor_line_text_without_eol_space = cursor_line_text_without_eol_space,
+    cursor_line_text_without_space = cursor_line_text_without_space,
+    first_char_position = first_char_position,
+    last_char_position = last_char_position,
+    parsed_text = parsed_text
+  }
 end
 
 --- ユーザーが設定したモーションが正しいモーションか確認し、正しくない場合はそのモーションを削除したモーションを返す関数
