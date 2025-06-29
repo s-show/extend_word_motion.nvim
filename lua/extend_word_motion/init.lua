@@ -20,7 +20,7 @@ function M.setup(opts)
   M.options = vim.tbl_deep_extend("force", M.options, opts or {})
 
   for _, motion_key in ipairs(M.options.extend_motions) do
-    vim.keymap.set({ 'n', 'v' }, motion_key, '', {
+    vim.keymap.set({ 'n', 'v', 'o' }, motion_key, '', {
       noremap = true,
       callback = function()
         M.handle_motion(motion_key)
