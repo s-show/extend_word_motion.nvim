@@ -4,9 +4,7 @@ local pcall_result, tinysegmenter = pcall(require, "tinysegmenter")
 local util = require('extend_word_motion.util')
 local motion = require('extend_word_motion.motion')
 
-M.options = {
-  extend_motions = { 'w', 'b', 'e', 'ge' }
-}
+M.options = {}
 
 function M.setup(opts)
   if pcall_result == false then
@@ -14,13 +12,15 @@ function M.setup(opts)
     return
   end
 
-  if opts and opts.extend_motions ~= nil then
-    opts.extend_motions = util.MotionValidation(opts.extend_motions)
-  end
+  local default_motions = { 'w', 'b', 'e', 'ge' }
+  local default_modes = { 'n', 'v', 'o' }
+
+  local extend_motions = util.RemoveInvalidMotion(opts.extend_motions) or default_motions
+  local extend_modes = util.RemoveInvalidMode(opts.extend_modes) or default_modes
   M.options = vim.tbl_deep_extend("force", M.options, opts or {})
 
-  for _, motion_key in ipairs(M.options.extend_motions) do
-    vim.keymap.set({ 'n', 'v', 'o' }, motion_key, '', {
+  for _, motion_key in ipairs(extend_motions) do
+    vim.keymap.set(extend_modes, motion_key, '', {
       noremap = true,
       callback = function()
         M.handle_motion(motion_key)
@@ -41,7 +41,8 @@ function M.handle_motion(motion_key)
 
     local line_info
     if cursor_line_number ~= cursor_position[2] or cursor_line_number == 0 then
-      -- 1回目の実行とは別の行に移動しているので、再度カーソル下の行を解析する
+      -- 1回目の実行か、または、2回目以降の移動で直前のカーソル行と異なる行に移動したら、
+      -- その時点のカーソル行の解析結果を変数に格納する。
       line_info = util.AnalyzeLine('.', tinysegmenter)
       cursor_line_number = cursor_position[2]
     end
