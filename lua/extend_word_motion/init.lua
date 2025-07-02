@@ -14,9 +14,21 @@ function M.setup(opts)
 
   local default_motions = { 'w', 'b', 'e', 'ge' }
   local default_modes = { 'n', 'v', 'o' }
+  local extend_motions = {}
+  local extend_modes = {}
 
-  local extend_motions = util.RemoveInvalidMotion(opts.extend_motions) or default_motions
-  local extend_modes = util.RemoveInvalidMode(opts.extend_modes) or default_modes
+  -- ユーザーが `setup()` 関数でモーションを設定していなければデフォルトモーションを使う
+  if opts.extend_motions == nil then
+    extend_motions = default_motions
+  else
+    extend_motions = util.RemoveInvalidMotion(opts.extend_motions)
+  end
+  -- ユーザーが `setup()` 関数でモードを設定していなければデフォルトモードを使う
+  if opts.extend_modes == nil then
+    extend_modes = default_modes
+  else
+    extend_modes = util.RemoveInvalidMode(opts.extend_modes)
+  end
   M.options = vim.tbl_deep_extend("force", M.options, opts or {})
 
   for _, motion_key in ipairs(extend_motions) do
