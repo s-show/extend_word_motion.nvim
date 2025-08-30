@@ -47,21 +47,45 @@ return {
 
 ## option
 
-拡張する Word motion を一部の Motion に限定できます。その場合 `~/.config/nvim/lua/plugins/extend_word_motion.lua` の `opts` に拡張したい Motion を指定します。
+### 拡張するモーションを限定する
 
-また、このプラグインで拡張した Word motion を適用するモードを限定することもできます。その場合 `opts` に適用したい Mode を指定します。
+拡張する Word motion を一部の Motion に限定できます。その場合 `~/.config/nvim/lua/plugins/extend_word_motion.lua` の `opts` に拡張したい Motion を指定します。
 
 ```lua
 return {
-  's-show/extend_word_motion.nvim',
   opts = {
     -- 拡張する Motion を `w`, `b`, `e` に限定
     extend_word_motions = { 'w', 'b', 'e' }
-    -- 拡張した Motion を適用するモードをノーマルモードとビジュアルモードに限定
-    extend_modes = { 'n', 'v' }
-  },
-  dependencies = {
-    'sirasagi62/tinysegmenter.nvim'
   },
 }
 ```
+
+### 拡張モーションを適用するモードを限定する
+
+このプラグインで拡張した Word motion を適用するモードを限定することもできます。その場合 `opts` に適用したい Mode を指定します。
+
+```lua
+return {
+  opts = {
+    -- 拡張した Motion を適用するモードをノーマルモードとビジュアルモードに限定
+    extend_modes = { 'n', 'v' }
+  },
+}
+```
+
+### デバッグ情報を出力
+
+デバッグに必要な情報（分かち書きの結果など）を出力させることができます。GitHub の Issues に不具合を報告する際などに使ってください。
+
+```lua
+return {
+  opts = {
+    -- デバッグに必要な情報を出力させる
+    debug = true
+  },
+}
+```
+
+## 関数
+
+`:= require('extend_word_motion').show_config()` で現在の設定を出力できます。

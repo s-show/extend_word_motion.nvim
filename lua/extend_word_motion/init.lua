@@ -46,17 +46,25 @@ end
 function M.handle_motion(motion_key)
   local count1 = vim.v.count1
   local cursor_line_number = 0
+  local line_info
 
   while count1 > 0 do
     local cursor_position = vim.fn.getcursorcharpos()
     local under_cursor_char = vim.fn.matchstr(vim.fn.getline('.'), '.', vim.fn.col('.') - 1)
 
-    local line_info
     if cursor_line_number ~= cursor_position[2] or cursor_line_number == 0 then
       -- 1回目の実行か、または、2回目以降の移動で直前のカーソル行と異なる行に移動したら、
       -- その時点のカーソル行の解析結果を変数に格納する。
       line_info = util.AnalyzeLine('.', tinysegmenter)
       cursor_line_number = cursor_position[2]
+    end
+
+    if M.options.debug then
+      print(vim.inspect({
+        motion_key = motion_key,
+        line_info,
+        under_cursor_char = under_cursor_char,
+      }))
     end
 
     local last_char_position = 0
@@ -77,6 +85,10 @@ function M.handle_motion(motion_key)
 
     count1 = count1 - 1
   end
+end
+
+function M.show_config()
+  print(vim.inspect(M.options))
 end
 
 return M
